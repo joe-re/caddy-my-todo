@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+set -e
+
+echo "🚀 Caddy セットアップスクリプト"
+echo "=================================="
+
+# Goのインストール確認
+if ! command -v go &> /dev/null; then
+    echo "❌ エラー: Golangがインストールされていません"
+    echo "   https://golang.org/dl/ からインストールしてください"
+    exit 1
+fi
+
+echo "✅ Golang が見つかりました: $(go version)"
+
+# xcaddyのインストール確認
+if ! command -v xcaddy &> /dev/null; then
+    echo "📦 xcaddy をインストールしています..."
+    go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
+
+    # GOPATHの確認とPATHへの追加
+    GOPATH=$(go env GOPATH)
+    if [[ ":$PATH:" != *":$GOPATH/bin:"* ]]; then
+        echo "⚠️  警告: $GOPATH/bin がPATHに含まれていません"
+        echo "   以下のコマンドをshellの設定ファイルに追加してください:"
+        echo "   export PATH=\"\$PATH:$GOPATH/bin\""
+        export PATH="$PATH:$GOPATH/bin"
+    fi
+else
+    echo "✅ xcaddy が見つかりました"
+fi
+
+# プロジェクトルートディレクトリを取得
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+CADDY_OUTPUT="$PROJECT_ROOT/caddy"
+
+# Caddyのビルド
+echo "🔨 forward_proxy プラグイン付きでCaddyをビルドしています..."
+echo "📁 出力先: $CADDY_OUTPUT"
+xcaddy build \
+    --with github.com/caddyserver/forwardproxy \
+    --output "$CADDY_OUTPUT"
+
+# 実行権限を付与
+chmod +x "$CADDY_OUTPUT"
+
+# Caddyのバージョン確認
+echo "✅ Caddy のbuildが完了しました!"
+"$CADDY_OUTPUT" version
+
+echo ""
+echo "🎉 セットアップ完了!"
+echo ""
+echo "📝 次のステップ:"
+echo "   プロジェクトルートでCaddyを起動してください:"
+echo "   ./caddy run --config Caddyfile"
+echo ""
+echo "   または、バックグラウンドで起動:"
+echo "   ./caddy start --config Caddyfile"
+echo ""
