@@ -9,6 +9,8 @@
     "dev": "npm run dev:backend & npm run dev:frontend",
     "dev:frontend": "npm run dev --workspace=apps/frontend",
     "dev:backend": "npm run dev --workspace=apps/backend",
+    "setup:caddy": "bin/setup_caddy",
+    "start:caddy": "./caddy run --config Caddyfile",
     "build": "npm run build --workspaces"
   },
   "devDependencies": {

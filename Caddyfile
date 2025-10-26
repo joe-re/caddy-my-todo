@@ -1,0 +1,44 @@
+{
+    admin off
+    log {
+        output stdout
+        format console
+        level DEBUG
+    }
+}
+
+app.my-todo.localhost {
+    tls internal
+    reverse_proxy localhost:3000 {
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Proto {scheme}
+    }
+}
+
+api.my-todo.localhost {
+    tls internal
+    reverse_proxy localhost:3001 {
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Proto {scheme}
+    }
+}
+
+:3128 {
+    forward_proxy {
+        hide_ip
+        hide_via
+        acl {
+            # 特定のドメインを許可
+            allow cdn.jsdelivr.net
+            allow *.jsdelivr.net
+            allow *.cdnjs.cloudflare.com
+            allow *.my-todo.localhost
+
+            deny all
+        }
+    }
+}

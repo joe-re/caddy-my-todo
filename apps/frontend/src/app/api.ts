@@ -1,6 +1,7 @@
 import { Todo, CreateTodoDto, UpdateTodoDto } from '@/types/todo';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://api.my-todo.localhost:3001';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.my-todo.localhost';
+console.log('API_BASE_URL', API_BASE_URL);
 
 export const todoApi = {
   async getAll(): Promise<Todo[]> {

@@ -6,8 +6,13 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:3000',
+      'https://localhost:3000',
       'http://app.my-todo.localhost',
-      'http://app.my-todo.localhost:3000'
+      'https://app.my-todo.localhost',
+      'http://api.my-todo.localhost',
+      'https://api.my-todo.localhost',
+      'http://api.my-todo.localhost:3001',
+      'https://api.my-todo.localhost:3001'
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
